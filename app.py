@@ -312,60 +312,156 @@ st.write(
 
 
 # Teacher Inputs
-# Using a form + explicit keys makes the text fields stable and editable
-# and sends all teacher inputs together when Generate is pressed.
+
+# ==============================
+# Visual Styling
+# ==============================
+
+st.markdown("""
+<style>
+.hero {
+    padding: 1.4rem 1.6rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #eef5ff 0%, #f7f9fc 100%);
+    border: 1px solid #dbe5f1;
+    margin-bottom: 1.2rem;
+}
+.hero-title {
+    font-size: 2.2rem;
+    font-weight: 750;
+    margin: 0;
+}
+.hero-subtitle {
+    font-size: 1.05rem;
+    margin-top: 0.35rem;
+    color: #52606d;
+}
+.agent-card {
+    padding: 0.9rem;
+    border-radius: 12px;
+    border: 1px solid #e1e7ef;
+    background: #ffffff;
+    text-align: center;
+    min-height: 105px;
+}
+.agent-icon { font-size: 1.6rem; }
+.agent-name { font-weight: 650; margin-top: 0.25rem; }
+.agent-desc { font-size: 0.82rem; color: #697586; }
+.section-note { color: #667085; margin-bottom: 0.8rem; }
+</style>
+""", unsafe_allow_html=True)
+
+
+# ==============================
+# Hero Header
+# ==============================
+
+st.markdown("""
+<div class="hero">
+    <div class="hero-title">🎓 EduAgent AI</div>
+    <div class="hero-subtitle">
+        Multi-Agent Teaching Assistant — create a complete, classroom-ready
+        teaching package in seconds.
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ==============================
+# Agent Overview
+# ==============================
+
+st.markdown("### 🤖 How EduAgent AI works")
+
+agent_cols = st.columns(4)
+
+agents = [
+    ("📋", "Planning Agent", "Builds the lesson structure"),
+    ("🧠", "Content Agent", "Creates teaching material"),
+    ("📝", "Assessment Agent", "Creates questions & homework"),
+    ("🔍", "Review Agent", "Checks quality and alignment"),
+]
+
+for col, (icon, name, description) in zip(agent_cols, agents):
+    with col:
+        st.markdown(
+            f"""
+            <div class="agent-card">
+                <div class="agent-icon">{icon}</div>
+                <div class="agent-name">{name}</div>
+                <div class="agent-desc">{description}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+st.markdown("### 🧑‍🏫 Create your teaching package")
+st.markdown(
+    '<div class="section-note">Enter your lesson details below, then let the four AI agents prepare the package.</div>',
+    unsafe_allow_html=True
+)
+
 
 with st.form("teaching_package_form"):
 
-    subject = st.text_input(
-        "Subject",
-        value="Physics",
-        key="subject_input",
-        placeholder="e.g. Physics"
-    )
+    input_col1, input_col2 = st.columns(2)
 
-    grade = st.text_input(
-        "Grade",
-        value="Grade 9",
-        key="grade_input",
-        placeholder="e.g. Grade 9"
-    )
+    with input_col1:
+        subject = st.text_input(
+            "Subject",
+            value="Physics",
+            key="subject_input",
+            placeholder="e.g. Physics"
+        )
 
-    topic = st.text_input(
-        "Topic",
-        value="Ohm's Law",
-        key="topic_input",
-        placeholder="e.g. Ohm's Law"
-    )
+        grade = st.text_input(
+            "Grade",
+            value="Grade 9",
+            key="grade_input",
+            placeholder="e.g. Grade 9"
+        )
 
-    duration = st.number_input(
-        "Class Duration (minutes)",
-        min_value=10,
-        max_value=180,
-        value=40,
-        step=5,
-        key="duration_input"
-    )
+        topic = st.text_input(
+            "Topic",
+            value="Ohm's Law",
+            key="topic_input",
+            placeholder="e.g. Ohm's Law"
+        )
 
-    difficulty = st.selectbox(
-        "Difficulty Level",
-        ["Easy", "Medium", "Hard"],
-        index=1,
-        key="difficulty_input"
-    )
+    with input_col2:
+        duration = st.number_input(
+            "Class Duration (minutes)",
+            min_value=10,
+            max_value=180,
+            value=40,
+            step=5,
+            key="duration_input"
+        )
+
+        difficulty = st.selectbox(
+            "Difficulty Level",
+            ["Easy", "Medium", "Hard"],
+            index=1,
+            key="difficulty_input"
+        )
+
+        st.caption("💡 Tip: Choose a difficulty level appropriate for your students.")
 
     submitted = st.form_submit_button(
         "🚀 Generate Teaching Package",
-        type="primary"
+        type="primary",
+        use_container_width=True
     )
 
 
-# Generate Button
+# ==============================
+# Generate Package
+# ==============================
 
 if submitted:
 
     with st.spinner(
-        "EduAgent AI is preparing your teaching package..."
+        "🤖 Four AI agents are preparing your teaching package..."
     ):
 
         package = generate_teaching_package(
@@ -376,18 +472,71 @@ if submitted:
             difficulty
         )
 
-    st.success(
-        "Teaching package generated successfully!"
+    st.success("✅ Teaching package generated successfully!")
+
+    st.markdown(f"### 📚 Teaching Package: {topic}")
+
+    st.caption(
+        f"{subject} • {grade} • {duration} minutes • {difficulty} difficulty"
     )
 
-    st.header("📚 Lesson Plan")
-    st.markdown(package["lesson_plan"])
+    tab1, tab2, tab3, tab4 = st.tabs([
+        "📚 Lesson Plan",
+        "🧠 Teaching Content",
+        "📝 Assessment",
+        "🔍 Review"
+    ])
 
-    st.header("🧠 Teaching Content")
-    st.markdown(package["content"])
+    with tab1:
+        st.markdown(package["lesson_plan"])
 
-    st.header("📝 Assessment")
-    st.markdown(package["assessment"])
+    with tab2:
+        st.markdown(package["content"])
 
-    st.header("🔍 Review")
-    st.markdown(package["review"])
+    with tab3:
+        st.markdown(package["assessment"])
+
+    with tab4:
+        st.markdown(package["review"])
+
+    download_text = f"""EDUAGENT AI — TEACHING PACKAGE
+
+Subject: {subject}
+Grade: {grade}
+Topic: {topic}
+Class Duration: {duration} minutes
+Difficulty: {difficulty}
+
+==================================================
+LESSON PLAN
+==================================================
+
+{package["lesson_plan"]}
+
+==================================================
+TEACHING CONTENT
+==================================================
+
+{package["content"]}
+
+==================================================
+ASSESSMENT
+==================================================
+
+{package["assessment"]}
+
+==================================================
+REVIEW
+==================================================
+
+{package["review"]}
+"""
+
+    st.download_button(
+        "📥 Download Teaching Package",
+        data=download_text,
+        file_name=f"EduAgent_{topic.replace(' ', '_')}.txt",
+        mime="text/plain",
+        type="secondary",
+        use_container_width=True
+    )
