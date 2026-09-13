@@ -312,42 +312,57 @@ st.write(
 
 
 # Teacher Inputs
+# Using a form + explicit keys makes the text fields stable and editable
+# and sends all teacher inputs together when Generate is pressed.
 
-subject = st.text_input(
-    "Subject",
-    "Physics"
-)
+with st.form("teaching_package_form"):
 
-grade = st.text_input(
-    "Grade",
-    "Grade 9"
-)
+    subject = st.text_input(
+        "Subject",
+        value="Physics",
+        key="subject_input",
+        placeholder="e.g. Physics"
+    )
 
-topic = st.text_input(
-    "Topic",
-    "Ohm's Law"
-)
+    grade = st.text_input(
+        "Grade",
+        value="Grade 9",
+        key="grade_input",
+        placeholder="e.g. Grade 9"
+    )
 
-duration = st.number_input(
-    "Class Duration (minutes)",
-    min_value=10,
-    max_value=180,
-    value=40,
-    step=5
-)
+    topic = st.text_input(
+        "Topic",
+        value="Ohm's Law",
+        key="topic_input",
+        placeholder="e.g. Ohm's Law"
+    )
 
-difficulty = st.selectbox(
-    "Difficulty Level",
-    ["Easy", "Medium", "Hard"]
-)
+    duration = st.number_input(
+        "Class Duration (minutes)",
+        min_value=10,
+        max_value=180,
+        value=40,
+        step=5,
+        key="duration_input"
+    )
+
+    difficulty = st.selectbox(
+        "Difficulty Level",
+        ["Easy", "Medium", "Hard"],
+        index=1,
+        key="difficulty_input"
+    )
+
+    submitted = st.form_submit_button(
+        "🚀 Generate Teaching Package",
+        type="primary"
+    )
 
 
 # Generate Button
 
-if st.button(
-    "🚀 Generate Teaching Package",
-    type="primary"
-):
+if submitted:
 
     with st.spinner(
         "EduAgent AI is preparing your teaching package..."
