@@ -2,5 +2,3 @@ streamlit
 google-genai
 pypdf
 numpy
-streamlit
-google-genai
